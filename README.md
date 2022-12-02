@@ -68,7 +68,8 @@ gene_ID	transcript_ID	annot_gene_id	annot_transcript_id	annot_gene_name	annot_tr
                            2
   -o, --outputpath PATH    Path to output
 ``` 
-**For a list of commands, run lime --help**
+For a list of commands, run
+```lime --help```
 
 ### How to run LIME
 #### Clone repository to Desktop
