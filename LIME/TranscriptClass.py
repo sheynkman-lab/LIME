@@ -24,7 +24,9 @@ class Transcript():
         return row
         
     def makeJunctionString(self, exonsdict):
+        # {1: [0, 10], 2: [20, 30], 3: [40, 50]}
         junctionString = ""
+        # if self.strand == "+":
         for i in exonsdict:
             if i+1 in exonsdict:
                 exon = exonsdict[i]
@@ -33,5 +35,15 @@ class Transcript():
                 junctionString = junctionString + junction
                 if i+2 in exonsdict:
                     junctionString = junctionString + ":"
+        # elif self.strand == "-":
+        #     exonsdict_rev = reversed(exonsdict)
+        #     # {1: [0, 10], 2: [20, 30], 3: [40, 50]}
+        #     # {3: [40, 50], 2: [20, 30], 1: [0, 10]}
+        #     # goal: 40-29:20-9
+        #     # goal: str(exon[0]-1) + "-" + next_exon[1]
+        #     for i in exonsdict_rev:
+        #         if i+1 in exonsdict:
+        #             exon = exonsdict[i]
+                
         return junctionString 
 

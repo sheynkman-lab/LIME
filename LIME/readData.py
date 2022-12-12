@@ -19,6 +19,7 @@ def loadSE(rmatsPath, type, outputpath):
     
     outputfile = str(outputpath) + "/SE.csv"
     SE.to_csv(outputfile, index = False)
+    print("SE loaded")
     return SE
 
 def loadMXE(rmatsPath, type, outputpath): 
@@ -34,7 +35,7 @@ def loadMXE(rmatsPath, type, outputpath):
     MXE["excID"] = MXE.apply(lambda row: getExclusionID(row, "mxe"), axis = 1)
     outputfile = str(outputpath) + "/MXE.csv"
     MXE.to_csv(outputfile, index = False)
-
+    print("MXE loaded")
     return MXE
 
 def loadA3SS(rmatsPath, type, outputpath): 
@@ -51,6 +52,7 @@ def loadA3SS(rmatsPath, type, outputpath):
 
     outputfile = str(outputpath) + "/A3SS.csv"
     A3SS.to_csv(outputfile, index = False)
+    print("A3SS loaded")
     return A3SS
 
 def loadA5SS(rmatsPath, type, outputpath): 
@@ -66,6 +68,7 @@ def loadA5SS(rmatsPath, type, outputpath):
     A5SS["excID"] = A5SS.apply(lambda row: getExclusionID(row, "a5ss"), axis = 1)
     outputfile = str(outputpath) + "/A5SS.csv"
     A5SS.to_csv(outputfile, index = False)
+    print("A5SS loaded")
     return A5SS
 
 
@@ -199,9 +202,7 @@ def mergeAnnotQuants(LRannot, LRquant_c1, LRquant_c2):
     joined = pd.merge(joined, LRquant_c2, on='transcript_id', how='left')
     print("merge Annot & Quants: filling NAs")
     joined = joined.fillna(0)
-    print("---LR annotation and TPMs have been merged---")
-    #print("-----------------------------------")
-    #print(joined.tail(20))
+    print("LR annotation and TPMs have been merged")
     return joined
     
 def getLRDict(mergedDF):

@@ -7,8 +7,9 @@ import os
 # should write a function to use this to create transcript-centric table & event-centric table
 
 
-def mapper(objectDictionary, rmats, outputpath):
-    df = pd.DataFrame(columns = ["gene_id", "gene_name", "strand", "rMATS_eventID", "rMATS_coord", "c1_rmats_psi", "c2_rmats_psi", "rmats_dpsi", "transcript_id", "long-read_UJC", "lr_tpm_c1", "lr_tpm_c2"])
+def mapper(objectDictionary, rmats, type, outputpath):
+    print("Running mapping algorithm on events")
+    df = pd.DataFrame(columns = ["gene_id", "gene_name", "strand", "eventID", "event_coord", "c1_event_psi", "c2_event_psi", "event_dpsi", "transcript_id", "long-read_UJC", "lr_tpm_c1", "lr_tpm_c2"])
     for lrUJC in objectDictionary.keys():
         tobj = objectDictionary[lrUJC]
         gene_id = tobj.gene_id #
@@ -40,11 +41,36 @@ def mapper(objectDictionary, rmats, outputpath):
                 df.loc[len(df)] = row
                 # print(row)
     print(df)
+    # df.to_csv("/Volumes/sheynkman/projects/shay_thesis/output/mapping_LINC01128_2.csv", index = False)
     # outputfile = str(outputpath) + "/mapping_LINC01128.csv"
     # df.to_csv(outputfile, index = False)
+    write_map_output(df, output_folder_path = outputpath, type = type)
     return df
 
+def write_map_output(mapperOutputDF, output_folder_path, type):
+    filepath = ""
+    type = type.lower()
+    if type == "se":
+        filepath = str(output_folder_path) + "/se_map.csv"
+    elif type == "mxe":
+        filepath = str(output_folder_path) + "/mxe_map.csv"
+    elif type == "a3ss":
+        filepath = str(output_folder_path) + "/a3ss_map.csv"
+    elif type == "a5ss":
+        filepath = str(output_folder_path) + "/a5ss_map.csv"
+    else:
+        filepath = "ERROR! INCORRECT EVENT TYPE ID"
+        print("unusable type found.")
+        return
+    mapperOutputDF.to_csv(filepath, index = False)
+    print("output printed to", filepath)
+    return 
+
 # mergeannotquants_LINC = pd.read_csv("/Volumes/sheynkman/projects/shay_thesis/output/01_tmp/02_long-read-pandas/mnzpLINC01128.csv")
-# SELINC = pd.read_csv("/Volumes/sheynkman/projects/shay_thesis/output/01_tmp/01_short-read_pandas/SELINC.csv")
 # objectDictionary = getLRDict(mergeannotquants_LINC)
-# mapper(objectDictionary, SELINC, outputpath = "/Volumes/sheynkman/projects/shay_thesis/output")
+# SELINC = pd.read_csv("/Volumes/sheynkman/projects/shay_thesis/output/01_tmp/01_short-read_pandas/LINC_data/SELINC.csv")
+# MXELINC = pd.read_csv("/Volumes/sheynkman/projects/shay_thesis/output/01_tmp/01_short-read_pandas/LINC_data/MXELINC.csv")
+# seMap = mapper(objectDictionary, SELINC, "se", outputpath = "/Volumes/sheynkman/projects/shay_thesis/output")
+# mxeMap = mapper(objectDictionary, MXELINC, "mxe", outputpath = "/Volumes/sheynkman/projects/shay_thesis/output/MXE_map_LINC.csv")
+# seMap.to_csv("/Volumes/sheynkman/projects/shay_thesis/output/SE_map_LINC.csv", index = False)
+# mxeMap.to_csv("/Volumes/sheynkman/projects/shay_thesis/output/MXE_map_LINC.csv", index = False)
