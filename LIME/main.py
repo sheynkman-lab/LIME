@@ -22,13 +22,20 @@ from gtfparse import read_gtf
 
 def cli(condition1: str, condition2: str, rmats_out_folder: Path, type: str, c1_quantcol: str, c2_quantcol: str, c1annot: Path, c1quant: Path, c2quant: Path, outputpath: Path):
     click.echo('')
-    intermediate = str(outputpath) + "/int"
-    if not os.path.exists(intermediate):
-        os.makedirs(intermediate)
-    se = loadSE(rmats_out_folder, type, str(intermediate))
-    mxe = loadMXE(rmats_out_folder, type, str(intermediate))
-    a3ss = loadA3SS(rmats_out_folder, type, str(intermediate))
-    a5ss = loadA5SS(rmats_out_folder, type, str(intermediate))
+    tmppath = outputpath + "/tmp"
+    outpath = outputpath + "/out"
+    if not os.path.exists(tmppath):
+        tmpfolder = os.makedirs(tmppath)
+    outfolder = os.mkdir(outpath)
+    
+    # intermediate = str(outputpath) + "/int"
+    # if not os.path.exists(intermediate):
+    #     os.makedirs(intermediate)
+        
+    se = loadSE(rmats_out_folder, type, str(tmppath))
+    mxe = loadMXE(rmats_out_folder, type, str(tmppath))
+    a3ss = loadA3SS(rmats_out_folder, type, str(tmppath))
+    a5ss = loadA5SS(rmats_out_folder, type, str(tmppath))
 
     lrannot = loadLRannot(c1annot)
     lrquant_c1 = loadLRquant(c1quant, c1_quantcol, condition1)
@@ -36,10 +43,10 @@ def cli(condition1: str, condition2: str, rmats_out_folder: Path, type: str, c1_
 
     lr_alldata = mergeAnnotQuants(lrannot, lrquant_c1, lrquant_c2)
     objectDictionary = getLRDict(lr_alldata)
-    seMap = mapper(objectDictionary, se, "se", (str(outputpath) + "/se_map.csv"))
-    mxeMap = mapper(objectDictionary, mxe, "mxe", (str(outputpath) + "/mxe_map.csv"))
-    a3ssMap = mapper(objectDictionary, a3ss, "a3ss", (str(outputpath) + "/a3ss_map.csv"))
-    a5ssMap = mapper(objectDictionary, a5ss, "a5ss", (str(outputpath) + "/a5ss_map.csv"))
+    seMap = mapper(objectDictionary, se, "se", (str(outfolder) + "/se_map.csv"))
+    mxeMap = mapper(objectDictionary, mxe, "mxe", (str(outfolder) + "/mxe_map.csv"))
+    a3ssMap = mapper(objectDictionary, a3ss, "a3ss", (str(outfolder) + "/a3ss_map.csv"))
+    a5ssMap = mapper(objectDictionary, a5ss, "a5ss", (str(outfolder) + "/a5ss_map.csv"))
     # print(df)
     # outputfile = str(outputpath) + "/mappingtable.csv"
     # df.to_csv(outputfile, index = False)

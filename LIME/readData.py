@@ -18,6 +18,7 @@ def loadSE(rmatsPath, type, outputpath):
     SE["excID"] = SE.apply(lambda row: getExclusionID(row, "se"), axis = 1)
     
     outputfile = str(outputpath) + "/SE.csv"
+    print("Now saving tmp output for SE")
     SE.to_csv(outputfile, index = False)
     print("SE loaded")
     return SE
@@ -34,6 +35,7 @@ def loadMXE(rmatsPath, type, outputpath):
     MXE["incID"] = MXE.apply(lambda row: getInclusionID(row, "mxe"), axis = 1)
     MXE["excID"] = MXE.apply(lambda row: getExclusionID(row, "mxe"), axis = 1)
     outputfile = str(outputpath) + "/MXE.csv"
+    print("Now saving tmp output for MXE")
     MXE.to_csv(outputfile, index = False)
     print("MXE loaded")
     return MXE
@@ -51,6 +53,7 @@ def loadA3SS(rmatsPath, type, outputpath):
     A3SS["excID"] = A3SS.apply(lambda row: getExclusionID(row, "a3ss"), axis = 1)
 
     outputfile = str(outputpath) + "/A3SS.csv"
+    print("Now saving tmp output for A3SS")
     A3SS.to_csv(outputfile, index = False)
     print("A3SS loaded")
     return A3SS
@@ -67,6 +70,7 @@ def loadA5SS(rmatsPath, type, outputpath):
     A5SS["incID"] = A5SS.apply(lambda row: getInclusionID(row, "a5ss"), axis = 1)
     A5SS["excID"] = A5SS.apply(lambda row: getExclusionID(row, "a5ss"), axis = 1)
     outputfile = str(outputpath) + "/A5SS.csv"
+    print("Now saving tmp output for A5SS")
     A5SS.to_csv(outputfile, index = False)
     print("A5SS loaded")
     return A5SS

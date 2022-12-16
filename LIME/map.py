@@ -8,11 +8,11 @@ import os
 
 
 def mapper(objectDictionary, rmats, type, outputpath):
-    print("Running mapping algorithm on events")
+    print("Running mapping algorithm on", type, "events")
     df = pd.DataFrame(columns = ["gene_id", "gene_name", "strand", "eventID", "event_coord", "c1_event_psi", "c2_event_psi", "event_dpsi", "transcript_id", "long-read_UJC", "lr_tpm_c1", "lr_tpm_c2"])
     for lrUJC in objectDictionary.keys():
         tobj = objectDictionary[lrUJC]
-        gene_id = tobj.gene_id #
+        gene_id = tobj.gene_id # 
         gene_name = tobj.gene_name #
         transcript_id = tobj.transcript_id #
         tpm_c1 = tobj.tpm_WTC11
