@@ -239,6 +239,7 @@ def getLRDict(mergedDF):
         objectDictionary[object.UJC] = object
         # {chr|+|ENST|0:100 : TranscriptObject}
     #print(objectDictionary)
+    print(objectDictionary)
     return objectDictionary
 
 # mergeannotquant = pd.read_csv("/Volumes/sheynkman/projects/shay_thesis/output/01_tmp/02_long-read-pandas/merge_nonzero_WASH7P.csv")

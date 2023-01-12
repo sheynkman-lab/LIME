@@ -29,11 +29,11 @@ def mapper(objectDictionary, rmats, type, outputpath):
                 row = [gene_id, gene_name, strand, eventID, coord, c1_psi, c2_psi, dpsi, transcript_id, lrUJC, tpm_c1, tpm_c2]
                 df.loc[len(df)] = row
                 # print(row)
-            elif str(eventRow["excJunction"] in lrUJC):
+            if str(eventRow["excJunction"] in lrUJC):
                 # print("found event", str(eventRow["excID"]), "in", lrUJC)
                 eventID = eventRow["excID"]
                 strand = eventRow["strand"]
-                coord = eventRow["incJunction"]
+                coord = eventRow["excJunction"]
                 c1_psi = eventRow["IncLevel1"]
                 c2_psi = eventRow["IncLevel2"]
                 dpsi = eventRow["IncLevelDifference"]
