@@ -193,10 +193,13 @@ def loadLRquant(tsvpath, count_column_name, condition_name):
     quant = quant.rename(columns = {'annot_transcript_id':'transcript_id'})
     return quant
 
+
 def calcTPM(quantrow, count_column_name, sumcounts):
     # Helper function to apply to each row of quantification file, referenced in loadLRquant
     tpm = ((quantrow[count_column_name]/sumcounts)*1000000)
     return tpm
+
+### THIS FUNCTION IS NOT WORKING CORRECTLY!!!! 
 
 def mergeAnnotQuants(LRannot, LRquant_c1, LRquant_c2):
     # merging annotation & quantification file on a left-join by transcript-id, as annotation contains more than just 
