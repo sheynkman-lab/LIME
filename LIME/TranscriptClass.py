@@ -13,7 +13,7 @@ class Transcript():
         self.junctionString = Transcript.makeJunctionString(self, self.exonsdict)
         self.UJC = Transcript.makeUJC(self)
         self.row = Transcript.rowDict(self)
-    
+
     def makeUJC(self):
         printstring = self.seqname + "|" + self.strand + "|" + self.transcript_id + "|" + self.junctionString
         return(printstring)

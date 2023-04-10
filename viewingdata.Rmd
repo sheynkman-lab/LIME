@@ -1,0 +1,48 @@
+---
+title: "GettingDFs"
+author: "Shay Iyer"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+```
+
+```{r load all dfs}
+celf1.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/CELF1/se_map.csv")
+
+nrp1.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/NRP1/mxe_map.csv")
+nrp1.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/NRP1/se_map.csv")
+
+nrp2.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/NRP2/se_map.csv")
+
+srsf1.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/SRSF1/se_map.csv")%>% filter(gene_name == "SRSF1")
+
+yap1.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/YAP1/mxe_map.csv")
+yap1.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/YAP1/se_map.csv")
+yap1.a3ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/YAP1/a3ss_map.csv")
+yap1.a5ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/YAP1/a5ss_map.csv")
+
+baz2b.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/BAZ2B/se_map.csv") %>% filter(gene_name == "BAZ2B")
+
+foxp1.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/FOXP1/se_map.csv") %>% filter(gene_name == "FOXP1")
+foxp1.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/FOXP1/mxe_map.csv") %>% filter(gene_name == "FOXP1")
+```
+
+
+
+```{r}
+nrp1.all %>% filter(event_dpsi < 0) %>% select(eventID) %>% unique() 
+yap1.all %>% filter(event_dpsi < 0) %>% select(eventID) %>% unique()
+srsf1.all %>% filter(event_dpsi < 0) %>% select(eventID) %>% unique()
+celf1.se %>% filter(event_dpsi < 0) %>% select(eventID) %>% unique()
+``` 
+
+```{r}
+nrp1.all %>% filter(eventID == "se.68087.inc" | eventID == "se.68086.inc") %>% select(transcript_id) %>% unique()
+
+nrp1.all %>% filter(transcript_id == "ENST00000265371.8")
+```
+
+

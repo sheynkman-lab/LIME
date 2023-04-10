@@ -1,7 +1,8 @@
 import pandas as pd
 import os
 from gtfparse import read_gtf
-from LIME.TranscriptClass import *
+#from LIME.TranscriptClass import *
+from TranscriptClass import *
 
 
 ## loading all the event data
@@ -199,7 +200,13 @@ def calcTPM(quantrow, count_column_name, sumcounts):
     tpm = ((quantrow[count_column_name]/sumcounts)*1000000)
     return tpm
 
-### THIS FUNCTION IS NOT WORKING CORRECTLY!!!! 
+def mergeOneAnnotQuant(LRannot, LRquant_c1):
+    print("merge Annot & Quants: left joining LR annotations to condition 1 TPMs (left join)")
+    joined = pd.merge(LRannot, LRquant_c1, on='transcript_id', how ='left')
+    print("merge Annot & Quants: filling NAs")
+    joined = joined.fillna(0)
+    print("LR annotation and TPMs have been merged")
+    return joined
 
 def mergeAnnotQuants(LRannot, LRquant_c1, LRquant_c2):
     # merging annotation & quantification file on a left-join by transcript-id, as annotation contains more than just 
@@ -236,13 +243,11 @@ def getLRDict(mergedDF):
             feature = row.loc["feature"]
             seqname = row.loc["seqname"]
             strand = row.loc["strand"]
-            tpm_c1 = row.loc["tpm_WTC11"]
+            tpm_c1 = row.loc["tpm_WTC11-1"]
             tpm_c2 = row.loc["tpm_EC"]
             object = Transcript(gene_id, gene_name, transcript_id, feature, seqname, strand, tpm_c1, tpm_c2, ExonsDict)
         objectDictionary[object.UJC] = object
         # {chr|+|ENST|0:100 : TranscriptObject}
-    #print(objectDictionary)
-    print(objectDictionary)
     return objectDictionary
 
 # mergeannotquant = pd.read_csv("/Volumes/sheynkman/projects/shay_thesis/output/01_tmp/02_long-read-pandas/merge_nonzero_WASH7P.csv")
