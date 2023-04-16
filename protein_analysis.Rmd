@@ -1,0 +1,21 @@
+---
+title: "protein_domain_analysis"
+author: "Shay Iyer"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+
+```
+
+```{ domain level comparison ; MSA using MAFFT}
+module load gcc/9.2.0
+module load openmpi/3.1.6
+module load mafft/7.475
+```
+

@@ -6,10 +6,10 @@ from readData import *
 from map import *
 from gtfparse import read_gtf
 
-candidates = ["FOXP1"]
+candidates = ["PECAM1", "CD44", "VASH1"]
 
 def rMATSload(rmats_out_folder, type, srpath):
-    type = "JC"
+    type = "JCEC"
     se = loadSE(rmats_out_folder, type, srpath)
     print("se done")
     mxe = loadMXE(rmats_out_folder, type, srpath)
@@ -23,7 +23,8 @@ def rMATSload(rmats_out_folder, type, srpath):
 def loadForCandidates():
     print("Beginning to run code... ")
     print("\nLoading rMATS events...")
-    master_outpath = "/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/"
+    ## change this to be WTC11-1-annot/
+    master_outpath = "/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/"
     master_annotpath = "/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/"
     master_quantpath = "/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/02_quantification/"
     # only needed to do this once!
@@ -67,8 +68,8 @@ def loadForCandidates():
 loadForCandidates()
 
 def mapCandidateData():
-
-    master_inpath = "/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/"
+    #change this to be WTC11-1-annot
+    master_inpath = "/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/"
     for candidate in candidates:
         c_outpath = master_inpath + candidate
         maqpath = c_outpath + "/merge-" + candidate + ".csv"
@@ -81,16 +82,16 @@ def mapCandidateData():
         # mergeannotquants['tpm_WTC11-1'] = 0
         
         objectDict = getLRDict(mergeannotquants)
-        sepath = master_inpath + "/SE.csv"
-        mxepath = master_inpath + "/MXE.csv"
-        a3sspath = master_inpath + "/A3SS.csv"
-        a5sspath = master_inpath + "/A5SS.csv"
+        sepath = master_inpath + "SE.csv"
+        mxepath = master_inpath + "MXE.csv"
+        a3sspath = master_inpath + "A3SS.csv"
+        a5sspath = master_inpath + "A5SS.csv"
 
         se = pd.read_csv(sepath)
         mxe = pd.read_csv(mxepath)
         a3ss = pd.read_csv(a3sspath)
         a5ss = pd.read_csv(a5sspath)
-
+        print("starting to map for gene", candidate)
         mapper(objectDict, se, "se", c_outpath)
         mapper(objectDict, mxe, "mxe", c_outpath)
         mapper(objectDict, a3ss, "a3ss", c_outpath)

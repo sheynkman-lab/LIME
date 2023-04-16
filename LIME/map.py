@@ -11,8 +11,8 @@ import os
 
 def mapper(objectDictionary, rmats, type, outputpath):
     df = pd.DataFrame(columns = ["gene_id", "gene_name", "strand", "eventID", "event_coord", "c1_event_psi", "c2_event_psi", "event_dpsi", "transcript_id", "long-read_UJC", "lr_tpm_c1", "lr_tpm_c2"])
+    print("starting to map for", type, "events")
     for lrUJC in objectDictionary.keys():
-        print("beginning the search")
         tobj = objectDictionary[lrUJC]
         gene_id = tobj.gene_id # 
         gene_name = tobj.gene_name #

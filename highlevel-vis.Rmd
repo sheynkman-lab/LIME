@@ -1,0 +1,97 @@
+---
+title: "highlevel-visualization"
+author: "Shay Iyer"
+date: "`r Sys.Date()`"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggthemes)
+```
+
+1. graph information about isoform patterns
+2. graph information about splicing patterns
+3. UCSC genome browser for the BAZ2B examples
+4. UCSC genome browser for the YAP1 examples
+
+```{r color prep}
+
+a3ss <- "#003f5c"
+a5ss <- "#bc5090"
+se <- "#ff6361"
+mxe <- "#ffa600"
+extra <- "#58508d"
+```
+
+
+```{r annot.hl; all isoforms}
+
+annot.hl <- ec.wtc11.annot %>% mutate("status" = ifelse(grepl("ENST", transcript_id), "known", "novel")) %>% group_by(geneSymbol) %>% mutate("total" = n()) %>% ungroup() %>% unique()
+
+annot.hl.sum <- annot.hl %>% group_by(geneSymbol, total, status) %>% summarize(n_entries = n()) %>% mutate("pct_of_all" = paste0(as.character(round((n_entries/total*100), 2)), "%"))
+```
+
+```{r graphing isoform level data - ALL candidate isoforms}
+ggplot(data = annot.hl.sum, aes(x = geneSymbol, y = n_entries, fill = status)) + geom_col() + geom_text(position = "stack", aes(label = pct_of_all, y = n_entries), size = 3, color = "white", vjust = 1.5) + labs(title = "Known vs. novel status for all candidate gene isoform transcripts")  + xlab("Candidate gene") + ylab("Number of isoform transcripts sequenced") + theme_stata(scheme = "s1color") + scale_fill_manual(values = c(a5ss, mxe))
+```
+
+```{r allsplicing summary - ALL splice events}
+allsplicing <- allsplicing %>% group_by(geneSymbol) %>% mutate(totalevents = n()) %>% ungroup
+
+allsplicing.sum <- allsplicing %>% group_by(type, geneSymbol) %>% mutate(ntype = n(), pct_type = paste0(round((ntype/totalevents)*100,2),"%"))
+
+allsplicing.sum <- allsplicing.sum %>% select(geneSymbol, type, ntype, totalevents, pct_type) %>% unique()
+```
+
+```{r graphing event level data - ALL splicing events}
+ggplot(allsplicing.sum, aes(x = geneSymbol, y = ntype, fill = type)) + geom_col() + geom_text(position = "stack", aes(label = pct_type, y = ntype), size = 3, color = "white", vjust = 1.5) + labs(title = "All rMATS events called for candidate genes")  + xlab("Candidate gene") + ylab("Number of events called") + theme_stata(scheme = "s1color") + scale_fill_manual(values = c(a3ss, a5ss, se, mxe))
+``` 
+
+```{r}
+mapped_isoforms <- allmaps$transcript_id %>% unique()
+mapped_events <- allmaps$genID %>% unique()
+```
+
+```{r annot.hl; mapped isoforms}
+
+annot.hl.mapped <- ec.wtc11.annot %>% filter(transcript_id %in% mapped_isoforms) %>% mutate("status" = ifelse(grepl("ENST", transcript_id), "known", "novel")) %>% group_by(geneSymbol) %>% mutate("total" = n()) %>% ungroup() %>% unique()
+
+annot.hl.sum.mapped <- annot.hl.mapped %>% group_by(geneSymbol, total, status) %>% summarize(n_entries = n()) %>% mutate("pct_of_all" = paste0(as.character(round((n_entries/total*100), 2)), "%"))
+```
+
+```{r allsplicing summary - mapped splice events}
+allsplicing.mapped <- allsplicing %>% filter(genID %in% mapped_events) %>% group_by(geneSymbol) %>% mutate(totalevents = n()) %>% ungroup
+
+allsplicing.sum.mapped <- allsplicing.mapped %>% group_by(type, geneSymbol) %>% mutate(ntype = n(), pct_type = paste0(round((ntype/totalevents)*100,2),"%")) %>% select(geneSymbol, type, ntype, totalevents, pct_type) %>% unique()
+```
+
+
+```{r graphing isoform level data - mapped candidate isoforms}
+ggplot(data = annot.hl.sum.mapped, aes(x = geneSymbol, y = n_entries, fill = status)) + geom_col() + geom_text(position = "stack", aes(label = pct_of_all, y = n_entries), size = 3, color = "white", vjust = 1.5) + labs(title = "Known vs. novel status for all candidate gene isoform transcripts")  + xlab("Candidate gene") + ylab("Number of isoform transcripts sequenced") + theme_stata(scheme = "s1color") + scale_fill_manual(values = c(a5ss, mxe))
+```
+
+```{r graphing event level data - mapped splicing events}
+ggplot(allsplicing.sum.mapped, aes(x = geneSymbol, y = ntype, fill = type)) + geom_col() + geom_text(position = "stack", aes(label = pct_type, y = ntype), size = 3, color = "white", vjust = 1.5) + labs(title = "All rMATS events called for candidate genes")  + xlab("Candidate gene") + ylab("Number of events called") + theme_stata(scheme = "s1color") + scale_fill_manual(values = c(a3ss, a5ss, se, mxe))
+```
+
+```{r}
+maq.tpmcounts <- maq %>% select(transcript_id, count_EC, count_WTC11, TPM_EC, TPM_WTC11, dTPM)
+
+allmaps <- left_join(allmaps, maq.tpmcounts, by = "transcript_id")
+
+allmaps.ecpref <- allmaps %>% filter(event_dpsi < 0 & dTPM < 0)
+
+allmaps.ecpref.transcripts <- allmaps.ecpref %>% select(gene_name, transcript_id) %>% unique()
+
+```
+
+```{r}
+ec.novel <- "ENCLB047SNQT" 
+wtc11.1.novel <- "ENCLB377SXJT"
+```
+
+

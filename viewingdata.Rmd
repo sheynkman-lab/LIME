@@ -3,46 +3,558 @@ title: "GettingDFs"
 author: "Shay Iyer"
 date: "`r Sys.Date()`"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
 library(tidyverse)
+candidates <- c("BAZ2B", "CDH5", "CD44", "CELF1", "FOXP1", "NRP1", "NRP2", "PECAM1", "SRSF1", "VASH1", "YAP1")
 ```
 
-```{r load all dfs}
-celf1.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/CELF1/se_map.csv")
+# USING EC AS ANNOTATION REFERENCE
+```{r load mapping datasets baz2b}
+baz2b.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/BAZ2B/se_map.csv") %>% filter(gene_name == "BAZ2B") %>% mutate(type = "se")
 
-nrp1.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/NRP1/mxe_map.csv")
-nrp1.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/NRP1/se_map.csv")
+baz2b.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/BAZ2B/mxe_map.csv") %>% filter(gene_name == "BAZ2B") %>% mutate(type = "mxe")
 
-nrp2.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/NRP2/se_map.csv")
+baz2b.a3ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/BAZ2B/a3ss_map.csv") %>% filter(gene_name == "BAZ2B") %>% mutate(type = "a3ss")
 
-srsf1.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/SRSF1/se_map.csv")%>% filter(gene_name == "SRSF1")
+baz2b.a5ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/BAZ2B/a5ss_map.csv") %>% filter(gene_name == "BAZ2B") %>% mutate(type = "a5ss")
 
-yap1.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/YAP1/mxe_map.csv")
-yap1.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/YAP1/se_map.csv")
-yap1.a3ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/YAP1/a3ss_map.csv")
-yap1.a5ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/YAP1/a5ss_map.csv")
+baz2b.all.ec <- rbind(baz2b.se, baz2b.mxe, baz2b.a3ss, baz2b.a5ss)
 
-baz2b.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/BAZ2B/se_map.csv") %>% filter(gene_name == "BAZ2B")
+rm(baz2b.se, baz2b.mxe, baz2b.a3ss, baz2b.a5ss)
+```
 
-foxp1.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/FOXP1/se_map.csv") %>% filter(gene_name == "FOXP1")
-foxp1.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/FOXP1/mxe_map.csv") %>% filter(gene_name == "FOXP1")
+```{r load mapping datasets cdh5}
+cdh5.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/CDH5/se_map.csv") %>% filter(gene_name == "CDH5") %>% mutate(type = "se")
+
+cdh5.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/CDH5/mxe_map.csv") %>% filter(gene_name == "CDH5") %>% mutate(type = "mxe")
+
+cdh5.a3ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/CDH5/a3ss_map.csv") %>% filter(gene_name == "CDH5") %>% mutate(type = "a3ss")
+
+cdh5.a5ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/CDH5/a5ss_map.csv") %>% filter(gene_name == "CDH5") %>% mutate(type = "a5ss")
+
+cdh5.all.ec <- rbind(cdh5.se, cdh5.mxe, cdh5.a3ss, cdh5.a5ss)
+
+rm(cdh5.se, cdh5.mxe, cdh5.a3ss, cdh5.a5ss)
+```
+
+```{r load mapping datasets cd44}
+cd44.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/CD44/se_map.csv") %>% filter(gene_name == "CD44") %>% mutate(type = "se")
+
+cd44.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/CD44/mxe_map.csv") %>% filter(gene_name == "CD44") %>% mutate(type = "mxe")
+
+cd44.a3ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/CD44/a3ss_map.csv") %>% filter(gene_name == "CD44") %>% mutate(type = "a3ss")
+
+cd44.a5ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/CD44/a5ss_map.csv") %>% filter(gene_name == "CD44") %>% mutate(type = "a5ss")
+
+cd44.all.ec <- rbind(cd44.se, cd44.mxe, cd44.a3ss, cd44.a5ss)
+
+rm(cd44.se, cd44.mxe, cd44.a3ss, cd44.a5ss)
+```
+
+```{r load mapping datasets celf1}
+celf1.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/CELF1/se_map.csv") %>% filter(gene_name == "CELF1") %>% mutate(type = "se")
+
+celf1.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/CELF1/mxe_map.csv") %>% filter(gene_name == "CELF1") %>% mutate(type = "mxe")
+
+celf1.a3ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/CELF1/a3ss_map.csv") %>% filter(gene_name == "CELF1") %>% mutate(type = "a3ss")
+
+celf1.a5ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/CELF1/a5ss_map.csv") %>% filter(gene_name == "CELF1") %>% mutate(type = "a5ss")
+
+celf1.all.ec <- rbind(celf1.se, celf1.mxe, celf1.a3ss, celf1.a5ss)
+
+rm(celf1.se, celf1.mxe, celf1.a3ss, celf1.a5ss)
+```
+
+```{r load mapping datasets foxp1}
+foxp1.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/FOXP1/se_map.csv") %>% filter(gene_name == "FOXP1") %>% mutate(type = "se")
+
+foxp1.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/FOXP1/mxe_map.csv") %>% filter(gene_name == "FOXP1") %>% mutate(type = "mxe")
+
+foxp1.a3ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/FOXP1/a3ss_map.csv") %>% filter(gene_name == "FOXP1") %>% mutate(type = "a3ss")
+
+foxp1.a5ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/FOXP1/a5ss_map.csv") %>% filter(gene_name == "FOXP1") %>% mutate(type = "a5ss")
+
+foxp1.all.ec <- rbind(foxp1.se, foxp1.mxe, foxp1.a3ss, foxp1.a5ss)
+
+rm(foxp1.se, foxp1.mxe, foxp1.a3ss, foxp1.a5ss)
+```
+
+```{r load mapping datasets nrp1}
+nrp1.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/NRP1/se_map.csv") %>% filter(gene_name == "NRP1") %>% mutate(type = "se")
+
+nrp1.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/NRP1/mxe_map.csv") %>% filter(gene_name == "NRP1") %>% mutate(type = "mxe")
+
+nrp1.a3ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/NRP1/a3ss_map.csv") %>% filter(gene_name == "NRP1") %>% mutate(type = "a3ss")
+
+nrp1.a5ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/NRP1/a5ss_map.csv") %>% filter(gene_name == "NRP1") %>% mutate(type = "a5ss")
+
+nrp1.all.ec <- rbind(nrp1.se, nrp1.mxe, nrp1.a3ss, nrp1.a5ss)
+
+rm(nrp1.se, nrp1.mxe, nrp1.a3ss, nrp1.a5ss)
+```
+
+```{r load mapping datasets nrp2}
+nrp2.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/NRP2/se_map.csv") %>% filter(gene_name == "NRP2") %>% mutate(type = "se")
+
+nrp2.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/NRP2/mxe_map.csv") %>% filter(gene_name == "NRP2") %>% mutate(type = "mxe")
+
+nrp2.a3ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/NRP2/a3ss_map.csv") %>% filter(gene_name == "NRP2") %>% mutate(type = "a3ss")
+
+nrp2.a5ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/NRP2/a5ss_map.csv") %>% filter(gene_name == "NRP2") %>% mutate(type = "a5ss")
+
+nrp2.all.ec <- rbind(nrp2.se, nrp2.mxe, nrp2.a3ss, nrp2.a5ss)
+
+rm(nrp2.se, nrp2.mxe, nrp2.a3ss, nrp2.a5ss)
+```
+
+```{r load mapping datasets pecam1}
+pecam1.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/PECAM1/se_map.csv") %>% filter(gene_name == "PECAM1") %>% mutate(type = "se")
+
+pecam1.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/PECAM1/mxe_map.csv") %>% filter(gene_name == "PECAM1") %>% mutate(type = "mxe")
+
+pecam1.a3ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/PECAM1/a3ss_map.csv") %>% filter(gene_name == "PECAM1") %>% mutate(type = "a3ss")
+
+pecam1.a5ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/PECAM1/a5ss_map.csv") %>% filter(gene_name == "PECAM1") %>% mutate(type = "a5ss")
+
+pecam1.all.ec <- rbind(pecam1.se, pecam1.mxe, pecam1.a3ss, pecam1.a5ss)
+
+rm(pecam1.se, pecam1.mxe, pecam1.a3ss, pecam1.a5ss)
+```
+
+```{r load mapping datasets vash1}
+vash1.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/VASH1/se_map.csv") %>% filter(gene_name == "VASH1") %>% mutate(type = "se")
+
+vash1.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/VASH1/mxe_map.csv") %>% filter(gene_name == "VASH1") %>% mutate(type = "mxe")
+
+vash1.a3ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/VASH1/a3ss_map.csv") %>% filter(gene_name == "VASH1") %>% mutate(type = "a3ss")
+
+vash1.a5ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/VASH1/a5ss_map.csv") %>% filter(gene_name == "VASH1") %>% mutate(type = "a5ss")
+
+vash1.all.ec <- rbind(vash1.se, vash1.mxe, vash1.a3ss, vash1.a5ss)
+
+rm(vash1.se, vash1.mxe, vash1.a3ss, vash1.a5ss)
+```
+
+```{r load mapping datasets srsf1}
+srsf1.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/SRSF1/se_map.csv") %>% filter(gene_name == "SRSF1") %>% mutate(type = "se")
+
+srsf1.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/SRSF1/mxe_map.csv") %>% filter(gene_name == "SRSF1") %>% mutate(type = "mxe")
+
+srsf1.a3ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/SRSF1/a3ss_map.csv") %>% filter(gene_name == "SRSF1") %>% mutate(type = "a3ss")
+
+srsf1.a5ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/SRSF1/a5ss_map.csv") %>% filter(gene_name == "SRSF1") %>% mutate(type = "a5ss")
+
+srsf1.all.ec <- rbind(srsf1.se, srsf1.mxe, srsf1.a3ss, srsf1.a5ss)
+
+rm(srsf1.se, srsf1.mxe, srsf1.a3ss, srsf1.a5ss)
+```
+
+```{r load mapping datasets yap1}
+yap1.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/YAP1/se_map.csv") %>% filter(gene_name == "YAP1") %>% mutate(type = "se")
+
+yap1.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/YAP1/mxe_map.csv") %>% filter(gene_name == "YAP1") %>% mutate(type = "mxe")
+
+yap1.a3ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/YAP1/a3ss_map.csv") %>% filter(gene_name == "YAP1") %>% mutate(type = "a3ss")
+
+yap1.a5ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/EC-annot/YAP1/a5ss_map.csv") %>% filter(gene_name == "YAP1") %>% mutate(type = "a5ss")
+
+yap1.all.ec <- rbind(yap1.se, yap1.mxe, yap1.a3ss, yap1.a5ss)
+
+rm(yap1.se, yap1.mxe, yap1.a3ss, yap1.a5ss)
+```
+
+# USING WTC11 AS ANNOTATION REFERENCE
+
+```{r load mapping datasets baz2b}
+baz2b.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/BAZ2B/se_map.csv") %>% filter(gene_name == "BAZ2B") %>% mutate(type = "se")
+
+baz2b.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/BAZ2B/mxe_map.csv") %>% filter(gene_name == "BAZ2B") %>% mutate(type = "mxe")
+
+baz2b.a3ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/BAZ2B/a3ss_map.csv") %>% filter(gene_name == "BAZ2B") %>% mutate(type = "a3ss")
+
+baz2b.a5ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/BAZ2B/a5ss_map.csv") %>% filter(gene_name == "BAZ2B") %>% mutate(type = "a5ss")
+
+baz2b.all.wtc11 <- rbind(baz2b.se, baz2b.mxe, baz2b.a3ss, baz2b.a5ss)
+
+rm(baz2b.se, baz2b.mxe, baz2b.a3ss, baz2b.a5ss)
+```
+
+```{r load mapping datasets cdh5}
+cdh5.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/CDH5/se_map.csv") %>% filter(gene_name == "CDH5") %>% mutate(type = "se")
+
+cdh5.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/CDH5/mxe_map.csv") %>% filter(gene_name == "CDH5") %>% mutate(type = "mxe")
+
+cdh5.a3ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/CDH5/a3ss_map.csv") %>% filter(gene_name == "CDH5") %>% mutate(type = "a3ss")
+
+cdh5.a5ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/CDH5/a5ss_map.csv") %>% filter(gene_name == "CDH5") %>% mutate(type = "a5ss")
+
+cdh5.all.wtc11 <- rbind(cdh5.se, cdh5.mxe, cdh5.a3ss, cdh5.a5ss)
+
+rm(cdh5.se, cdh5.mxe, cdh5.a3ss, cdh5.a5ss)
+```
+
+```{r load mapping datasets cd44}
+cd44.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/CD44/se_map.csv") %>% filter(gene_name == "CD44") %>% mutate(type = "se")
+
+cd44.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/CD44/mxe_map.csv") %>% filter(gene_name == "CD44") %>% mutate(type = "mxe")
+
+cd44.a3ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/CD44/a3ss_map.csv") %>% filter(gene_name == "CD44") %>% mutate(type = "a3ss")
+
+cd44.a5ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/CD44/a5ss_map.csv") %>% filter(gene_name == "CD44") %>% mutate(type = "a5ss")
+
+cd44.all.wtc11 <- rbind(cd44.se, cd44.mxe, cd44.a3ss, cd44.a5ss)
+
+rm(cd44.se, cd44.mxe, cd44.a3ss, cd44.a5ss)
+```
+
+```{r load mapping datasets celf1}
+celf1.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/CELF1/se_map.csv") %>% filter(gene_name == "CELF1") %>% mutate(type = "se")
+
+celf1.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/CELF1/mxe_map.csv") %>% filter(gene_name == "CELF1") %>% mutate(type = "mxe")
+
+celf1.a3ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/CELF1/a3ss_map.csv") %>% filter(gene_name == "CELF1") %>% mutate(type = "a3ss")
+
+celf1.a5ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/CELF1/a5ss_map.csv") %>% filter(gene_name == "CELF1") %>% mutate(type = "a5ss")
+
+celf1.all.wtc11 <- rbind(celf1.se, celf1.mxe, celf1.a3ss, celf1.a5ss)
+
+rm(celf1.se, celf1.mxe, celf1.a3ss, celf1.a5ss)
+```
+
+```{r load mapping datasets foxp1}
+foxp1.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/FOXP1/se_map.csv") %>% filter(gene_name == "FOXP1") %>% mutate(type = "se")
+
+foxp1.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/FOXP1/mxe_map.csv") %>% filter(gene_name == "FOXP1") %>% mutate(type = "mxe")
+
+foxp1.a3ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/FOXP1/a3ss_map.csv") %>% filter(gene_name == "FOXP1") %>% mutate(type = "a3ss")
+
+foxp1.a5ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/FOXP1/a5ss_map.csv") %>% filter(gene_name == "FOXP1") %>% mutate(type = "a5ss")
+
+foxp1.all.wtc11 <- rbind(foxp1.se, foxp1.mxe, foxp1.a3ss, foxp1.a5ss)
+
+rm(foxp1.se, foxp1.mxe, foxp1.a3ss, foxp1.a5ss)
+```
+
+```{r load mapping datasets nrp1}
+nrp1.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/NRP1/se_map.csv") %>% filter(gene_name == "NRP1") %>% mutate(type = "se")
+
+nrp1.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/NRP1/mxe_map.csv") %>% filter(gene_name == "NRP1") %>% mutate(type = "mxe")
+
+nrp1.a3ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/NRP1/a3ss_map.csv") %>% filter(gene_name == "NRP1") %>% mutate(type = "a3ss")
+
+nrp1.a5ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/NRP1/a5ss_map.csv") %>% filter(gene_name == "NRP1") %>% mutate(type = "a5ss")
+
+nrp1.all.wtc11 <- rbind(nrp1.se, nrp1.mxe, nrp1.a3ss, nrp1.a5ss)
+
+rm(nrp1.se, nrp1.mxe, nrp1.a3ss, nrp1.a5ss)
+```
+
+```{r load mapping datasets nrp2}
+nrp2.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/NRP2/se_map.csv") %>% filter(gene_name == "NRP2") %>% mutate(type = "se")
+
+nrp2.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/NRP2/mxe_map.csv") %>% filter(gene_name == "NRP2") %>% mutate(type = "mxe")
+
+nrp2.a3ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/NRP2/a3ss_map.csv") %>% filter(gene_name == "NRP2") %>% mutate(type = "a3ss")
+
+nrp2.a5ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/NRP2/a5ss_map.csv") %>% filter(gene_name == "NRP2") %>% mutate(type = "a5ss")
+
+nrp2.all.wtc11 <- rbind(nrp2.se, nrp2.mxe, nrp2.a3ss, nrp2.a5ss)
+
+rm(nrp2.se, nrp2.mxe, nrp2.a3ss, nrp2.a5ss)
+```
+
+```{r load mapping datasets pecam1}
+pecam1.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/PECAM1/se_map.csv") %>% filter(gene_name == "PECAM1") %>% mutate(type = "se")
+
+pecam1.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/PECAM1/mxe_map.csv") %>% filter(gene_name == "PECAM1") %>% mutate(type = "mxe")
+
+pecam1.a3ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/PECAM1/a3ss_map.csv") %>% filter(gene_name == "PECAM1") %>% mutate(type = "a3ss")
+
+pecam1.a5ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/PECAM1/a5ss_map.csv") %>% filter(gene_name == "PECAM1") %>% mutate(type = "a5ss")
+
+pecam1.all.wtc11 <- rbind(pecam1.se, pecam1.mxe, pecam1.a3ss, pecam1.a5ss)
+
+rm(pecam1.se, pecam1.mxe, pecam1.a3ss, pecam1.a5ss)
+```
+
+```{r load mapping datasets vash1}
+vash1.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/VASH1/se_map.csv") %>% filter(gene_name == "VASH1") %>% mutate(type = "se")
+
+vash1.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/VASH1/mxe_map.csv") %>% filter(gene_name == "VASH1") %>% mutate(type = "mxe")
+
+vash1.a3ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/VASH1/a3ss_map.csv") %>% filter(gene_name == "VASH1") %>% mutate(type = "a3ss")
+
+vash1.a5ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/VASH1/a5ss_map.csv") %>% filter(gene_name == "VASH1") %>% mutate(type = "a5ss")
+
+vash1.all.wtc11 <- rbind(vash1.se, vash1.mxe, vash1.a3ss, vash1.a5ss)
+
+rm(vash1.se, vash1.mxe, vash1.a3ss, vash1.a5ss)
+```
+
+```{r load mapping datasets srsf1}
+srsf1.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/SRSF1/se_map.csv") %>% filter(gene_name == "SRSF1") %>% mutate(type = "se")
+
+srsf1.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/SRSF1/mxe_map.csv") %>% filter(gene_name == "SRSF1") %>% mutate(type = "mxe")
+
+srsf1.a3ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/SRSF1/a3ss_map.csv") %>% filter(gene_name == "SRSF1") %>% mutate(type = "a3ss")
+
+srsf1.a5ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/SRSF1/a5ss_map.csv") %>% filter(gene_name == "SRSF1") %>% mutate(type = "a5ss")
+
+srsf1.all.wtc11 <- rbind(srsf1.se, srsf1.mxe, srsf1.a3ss, srsf1.a5ss)
+
+rm(srsf1.se, srsf1.mxe, srsf1.a3ss, srsf1.a5ss)
+```
+
+```{r load mapping datasets yap1}
+yap1.se <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/YAP1/se_map.csv") %>% filter(gene_name == "YAP1") %>% mutate(type = "se")
+
+yap1.mxe <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/YAP1/mxe_map.csv") %>% filter(gene_name == "YAP1") %>% mutate(type = "mxe")
+
+yap1.a3ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/YAP1/a3ss_map.csv") %>% filter(gene_name == "YAP1") %>% mutate(type = "a3ss")
+
+yap1.a5ss <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/WTC11-1-annot/YAP1/a5ss_map.csv") %>% filter(gene_name == "YAP1") %>% mutate(type = "a5ss")
+
+yap1.all.wtc11 <- rbind(yap1.se, yap1.mxe, yap1.a3ss, yap1.a5ss)
+
+rm(yap1.se, yap1.mxe, yap1.a3ss, yap1.a5ss)
 ```
 
 
 
-```{r}
-nrp1.all %>% filter(event_dpsi < 0) %>% select(eventID) %>% unique() 
-yap1.all %>% filter(event_dpsi < 0) %>% select(eventID) %>% unique()
-srsf1.all %>% filter(event_dpsi < 0) %>% select(eventID) %>% unique()
-celf1.se %>% filter(event_dpsi < 0) %>% select(eventID) %>% unique()
-``` 
+# ALL ELSE
+```{r making allmaps: all maps for candidate genes}
+# how many splicing events for the genes of interest?
 
-```{r}
-nrp1.all %>% filter(eventID == "se.68087.inc" | eventID == "se.68086.inc") %>% select(transcript_id) %>% unique()
+allmaps <- rbind(baz2b.all.ec, cdh5.all.ec, celf1.all.ec, foxp1.all.ec, nrp1.all.ec, nrp2.all.ec, srsf1.all.ec, yap1.all.ec, cd44.all.ec, pecam1.all.ec, vash1.all.ec, baz2b.all.wtc11, cdh5.all.wtc11, celf1.all.wtc11, foxp1.all.wtc11, nrp1.all.wtc11, nrp2.all.wtc11, srsf1.all.wtc11, yap1.all.wtc11, cd44.all.wtc11, pecam1.all.wtc11, vash1.all.wtc11) %>% filter(gene_name %in% candidates)
 
-nrp1.all %>% filter(transcript_id == "ENST00000265371.8")
+rm(baz2b.all.ec, cdh5.all.ec, celf1.all.ec, foxp1.all.ec, nrp1.all.ec, nrp2.all.ec, srsf1.all.ec, yap1.all.ec, cd44.all.ec, pecam1.all.ec, vash1.all.ec, baz2b.all.wtc11, cdh5.all.wtc11, celf1.all.wtc11, foxp1.all.wtc11, nrp1.all.wtc11, nrp2.all.wtc11, srsf1.all.wtc11, yap1.all.wtc11, cd44.all.wtc11, pecam1.all.wtc11, vash1.all.wtc11)
+
+allmaps <- allmaps %>% unique()
+```
+
+```{r run everthing above to load all map datasets}
+print("helloworld")
 ```
 
 
+# Aggregate data
+
+```{r making allsplicing: all splice events for candidate genes}
+SE <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/SE.csv") %>% filter(geneSymbol %in% candidates)
+MXE <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/MXE.csv") %>% filter(geneSymbol %in% candidates)
+A3SS <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/A3SS.csv") %>%  filter(geneSymbol %in% candidates)
+A5SS <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/A5SS.csv") %>% filter(geneSymbol %in% candidates)
+
+SE <- SE %>% select(c(GeneID, geneSymbol, chr, strand, PValue, FDR, IncLevel1, IncLevel2, IncLevelDifference, incID, excID)) %>% mutate("type" = "se")
+MXE <- MXE %>% select(c(GeneID, geneSymbol, chr, strand, PValue, FDR, IncLevel1, IncLevel2, IncLevelDifference, incID, excID)) %>% mutate("type" = "mxe")
+A3SS <- A3SS %>% select(c(GeneID, geneSymbol, chr, strand, PValue, FDR, IncLevel1, IncLevel2, IncLevelDifference, incID, excID)) %>% mutate("type" = "a3ss")
+A5SS <- A5SS %>% select(c(GeneID, geneSymbol, chr, strand, PValue, FDR, IncLevel1, IncLevel2, IncLevelDifference, incID, excID))  %>% mutate("type" = "a5ss")
+
+allsplicing <- rbind(SE, MXE, A3SS, A5SS)
+
+# allsplicing <- allsplicing %>%
+#   pivot_longer(
+#     cols = c(incID, excID),
+#     names_to = "incOrExc",
+#     values_to = "transcript_id"
+#   )  %>% select(-incOrExc)
+
+rm(SE, MXE, A3SS, A5SS)
+```
+
+```{r loading annot.*: annotation files for candidates}
+# nodelistcolumns <- c(GeneID, geneSymbol, chr, strand, PValue, FDR, IncLevel1, IncLevel2, IncLevelDifference, type, transcript_id)
+
+ec.annot.baz2b <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/EC-BAZ2B.gtf") %>% as.data.frame()
+ec.annot.cd44 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/EC-CD44.gtf") %>% as.data.frame()
+ec.annot.cdh5 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/EC-CDH5.gtf") %>% as.data.frame()
+ec.annot.celf1 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/EC-CELF1.gtf") %>% as.data.frame()
+ec.annot.foxp1 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/EC-FOXP1.gtf") %>% as.data.frame()
+ec.annot.nrp1 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/EC-NRP1.gtf") %>% as.data.frame()
+ec.annot.nrp2 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/EC-NRP2.gtf") %>% as.data.frame()
+ec.annot.pecam1 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/EC-PECAM1.gtf") %>% as.data.frame()
+ec.annot.srsf1 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/EC-SRSF1.gtf") %>% as.data.frame()
+ec.annot.vash1 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/EC-VASH1.gtf") %>% as.data.frame()
+ec.annot.yap1 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/EC-YAP1.gtf") %>% as.data.frame()
+
+wtc11.annot.baz2b <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/WTC11-1-BAZ2B.gtf") %>% as.data.frame()
+wtc11.annot.cd44 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/WTC11-1-CD44.gtf") %>% as.data.frame()
+wtc11.annot.cdh5 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/WTC11-1-CDH5.gtf") %>% as.data.frame()
+wtc11.annot.celf1 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/WTC11-1-CELF1.gtf") %>% as.data.frame()
+wtc11.annot.foxp1 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/WTC11-1-FOXP1.gtf") %>% as.data.frame()
+wtc11.annot.nrp1 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/WTC11-1-NRP1.gtf") %>% as.data.frame()
+wtc11.annot.nrp2 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/WTC11-1-NRP2.gtf") %>% as.data.frame()
+wtc11.annot.pecam1 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/WTC11-1-PECAM1.gtf") %>% as.data.frame()
+wtc11.annot.srsf1 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/WTC11-1-SRSF1.gtf") %>% as.data.frame()
+wtc11.annot.vash1 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/WTC11-1-VASH1.gtf") %>% as.data.frame()
+wtc11.annot.yap1 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/WTC11-1-YAP1.gtf") %>% as.data.frame()
+
+
+
+```
+
+```{r optional cleaning all ec.annot.* to resemble structure of allsplicing, no genID (see block below)}
+ec.annot.baz2b <- ec.annot.baz2b %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "transcript_id" = transcript_id
+) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+
+ec.annot.cd44 <- ec.annot.cd44 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "transcript_id" = transcript_id
+) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+
+ec.annot.cdh5 <- ec.annot.cdh5 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "transcript_id" = transcript_id
+) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+
+ec.annot.celf1 <- ec.annot.celf1 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "transcript_id" = transcript_id
+) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+
+ec.annot.foxp1 <- ec.annot.foxp1 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "transcript_id" = transcript_id
+) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+
+ec.annot.nrp1 <- ec.annot.nrp1 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "transcript_id" = transcript_id
+) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+
+ec.annot.nrp2 <- ec.annot.nrp2 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "transcript_id" = transcript_id
+) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+
+ec.annot.pecam1 <- ec.annot.pecam1 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "transcript_id" = transcript_id
+) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+
+ec.annot.srsf1 <- ec.annot.srsf1 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "transcript_id" = transcript_id
+) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+
+ec.annot.vash1 <- ec.annot.vash1 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "transcript_id" = transcript_id
+) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+
+ec.annot.yap1 <- ec.annot.yap1 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "transcript_id" = transcript_id
+) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform")
+```
+
+
+```{r optional cleaning all wtc11.annot.* to resemble structure of allsplicing, no genID (see block below)}
+wtc11.annot.baz2b <- wtc11.annot.baz2b %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "transcript_id" = transcript_id
+) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+
+wtc11.annot.cd44 <- wtc11.annot.cd44 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "transcript_id" = transcript_id
+) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+
+wtc11.annot.cdh5 <- wtc11.annot.cdh5 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "transcript_id" = transcript_id
+) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+
+wtc11.annot.celf1 <- wtc11.annot.celf1 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "transcript_id" = transcript_id
+) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+
+wtc11.annot.foxp1 <- wtc11.annot.foxp1 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "transcript_id" = transcript_id
+) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+
+wtc11.annot.nrp1 <- wtc11.annot.nrp1 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "transcript_id" = transcript_id
+) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+
+wtc11.annot.nrp2 <- wtc11.annot.nrp2 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "transcript_id" = transcript_id
+) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+
+wtc11.annot.pecam1 <- wtc11.annot.pecam1 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "transcript_id" = transcript_id
+) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+
+wtc11.annot.srsf1 <- wtc11.annot.srsf1 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "transcript_id" = transcript_id
+) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+
+wtc11.annot.vash1 <- wtc11.annot.vash1 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "transcript_id" = transcript_id
+) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+
+wtc11.annot.yap1 <- wtc11.annot.yap1 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "transcript_id" = transcript_id
+) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform")
+```
+
+```{r making ec.wtc11.annot}
+ec.wtc11.annot <- rbind(ec.annot.cd44, ec.annot.pecam1, ec.annot.vash1, ec.annot.yap1, ec.annot.srsf1, ec.annot.nrp2, ec.annot.nrp1, ec.annot.foxp1, ec.annot.celf1, ec.annot.cdh5, ec.annot.baz2b, wtc11.annot.baz2b, wtc11.annot.cdh5, wtc11.annot.celf1, wtc11.annot.foxp1, wtc11.annot.nrp1, wtc11.annot.nrp2, wtc11.annot.srsf1, wtc11.annot.yap1, wtc11.annot.cd44, wtc11.annot.pecam1, wtc11.annot.vash1) %>% unique() %>% filter(geneSymbol %in% candidates) %>% drop_na(transcript_id)
+
+rm(ec.annot.cd44, ec.annot.pecam1, ec.annot.vash1, ec.annot.yap1, ec.annot.srsf1, ec.annot.nrp2, ec.annot.nrp1, ec.annot.foxp1, ec.annot.celf1, ec.annot.cdh5, ec.annot.baz2b, wtc11.annot.baz2b, wtc11.annot.cdh5, wtc11.annot.celf1, wtc11.annot.foxp1, wtc11.annot.nrp1, wtc11.annot.nrp2, wtc11.annot.srsf1, wtc11.annot.yap1, wtc11.annot.cd44, wtc11.annot.pecam1, wtc11.annot.vash1)
+```
+
+```{r adding general ID to allmaps and allsplicing}
+allmaps <- allmaps <- allmaps %>% mutate(
+  "genID" = str_sub(eventID, end=-5)
+)
+allsplicing <- allsplicing <- allsplicing %>% mutate(
+  "genID" = str_sub(incID, end=-5)
+)
+```
+
+```{r loading full quant files}
+ec.quant <- read.csv("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/02_quantification/EC.tsv", sep = "\t")
+wtc11.quant <- read.csv("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/02_quantification/WTC11-1.tsv", sep = "\t")
+
+ec.quant.total <- sum(ec.quant$rep1ENCSR148IIG)
+
+wtc11.quant.total <- sum(wtc11.quant$rep1ENCSR507JOF)
+
+ec.quant <- ec.quant %>% filter(annot_gene_name %in% candidates) %>% select(-transcript_ID) %>%  rename("count_EC" = rep1ENCSR148IIG, "transcript_id" = annot_transcript_id) %>% select(transcript_id, count_EC)
+
+wtc11.quant <- wtc11.quant %>% filter(annot_gene_name %in% candidates) %>% select(-transcript_ID) %>% rename("count_WTC11" = rep1ENCSR507JOF, "transcript_id" = annot_transcript_id) %>% select(transcript_id, count_WTC11)
+
+maq <- left_join(ec.wtc11.annot, ec.quant, by = "transcript_id") 
+
+maq <- left_join(maq, wtc11.quant, by = "transcript_id")
+
+maq <- maq %>% 
+  select(-c(PValue, FDR, IncLevel1, IncLevel2, IncLevelDifference)) %>%
+  replace(is.na(.), 0) %>% 
+  mutate(
+  TPM_EC = (count_EC/ec.quant.total)*1000000,
+  TPM_WTC11 = (count_WTC11/wtc11.quant.total)*1000000,
+  dTPM = TPM_WTC11 - TPM_EC
+)
+
+```
+
+# exploratory 
+
+```{r writing GTFs as CSV}
+
+ec.path <- "/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/EC-candidates.gtf"
+wtc.path <- "/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/WTC11-1-candidates.gtf"
+
+ec.gtf <- rtracklayer::import(ec.path) %>% as.data.frame()
+wtc.gtf <- rtracklayer::import(wtc.path) %>% as.data.frame()
+
+write.csv(x = ec.gtf, file = "/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/EC-candidates.csv")
+write.csv(x = wtc.gtf, file = wtc.path <- "/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/WTC11-1-candidates.csv")
+
+# test.wtc.csv <- read.csv("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/WTC11-1-candidates.csv") %>% select(-X)
+
+```
+
+```{r merged annots making key}
+
+ec.nov.squish.path <- "/Volumes/sheynkman/projects/shay_thesis/ec-annot-squished.csv"
+wtc11.nov.squish.path <- "/Volumes/sheynkman/projects/shay_thesis/wtc11-annot-squished.csv"
+
+ec.nov.squish <- read.csv(ec.nov.squish.path)
+wtc11.nov.squish <- read.csv(wtc11.nov.squish.path)
+
+wtc11.annot <- left_join(wtc11.annot, wtc11.nov.squish, by = "transcript_id")
+
+ec.annot.nrp2 <- ec.annot %>% filter(gene_name == "NRP2")
+
+
+
+```
+
+```{r checking if ENCLBs match in width etc}
+novel.ec.annot <- ec.annot %>% filter(grepl("ENCLB", transcript_id)) %>% filter(gene_name %in% candidates) %>% filter(type == "transcript")
+novel.wtc.annot <- wtc11.annot %>% filter(grepl("ENCLB", transcript_id)) %>% filter(gene_name %in% candidates) %>% filter(type == "transcript")
+
+width.list.ec <- novel.ec.annot %>% dplyr::select(gene_name, width, transcript_id) %>% unique()
+
+nwtca.matchwidth <- novel.wtc.annot %>% filter(width %in% width.list.ec$width)
+
+celf1.width.ec <- width.list.ec %>% filter(gene_name == "CELF1")
+
+celf1.width.nwtca <- nwtca.matchwidth %>% filter(gene_name == "CELF1") %>% dplyr::select(gene_name, width, transcript_id)
+
+```
+
+Observation: none of the exon ranges match for the novel transcripts 

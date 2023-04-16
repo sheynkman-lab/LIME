@@ -18,103 +18,60 @@ set_graph_style()
 
 ## run viewingdata.Rmd to load all datasets
 
-
-```{r making event part of nodelist}
-
-candidates <- c("BAZ2B", "CELF1", "FOXP1", "nrp2", "NRP2", "SRSF1", "YAP1")
-
-SE <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/SE.csv") %>% filter(geneSymbol %in% candidates)
-MXE <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/MXE.csv") %>% filter(geneSymbol %in% candidates)
-A3SS <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/A3SS.csv") %>%  filter(geneSymbol %in% candidates)
-A5SS <- read.csv("/Volumes/sheynkman/projects/shay_thesis/output/candidate_mapping/A5SS.csv") %>% filter(geneSymbol %in% candidates)
-
-SE <- SE %>% select(c(GeneID, geneSymbol, chr, strand, PValue, FDR, IncLevel1, IncLevel2, IncLevelDifference, incID, excID)) %>% mutate("type" = "se")
-MXE <- MXE %>% select(c(GeneID, geneSymbol, chr, strand, PValue, FDR, IncLevel1, IncLevel2, IncLevelDifference, incID, excID)) %>% mutate("type" = "mxe")
-A3SS <- A3SS %>% select(c(GeneID, geneSymbol, chr, strand, PValue, FDR, IncLevel1, IncLevel2, IncLevelDifference, incID, excID)) %>% mutate("type" = "a3ss")
-A5SS <- A5SS %>% select(c(GeneID, geneSymbol, chr, strand, PValue, FDR, IncLevel1, IncLevel2, IncLevelDifference, incID, excID))  %>% mutate("type" = "a5ss")
-
-SE <- SE %>% 
-  pivot_longer(
-    cols = c(incID, excID), 
-    names_to = "incOrExc",
-    values_to = "specID"
-  )  %>% select(-incOrExc)
-
-MXE <- MXE %>% 
-  pivot_longer(
-    cols = c(incID, excID), 
-    names_to = "incOrExc",
-    values_to = "specID"
-  ) %>% select(-incOrExc)
-
-A3SS <- A3SS %>% 
-  pivot_longer(
-    cols = c(incID, excID), 
-    names_to = "incOrExc",
-    values_to = "specID"
-  ) %>% select(-incOrExc)
-
-A5SS <- A5SS %>% 
-  pivot_longer(
-    cols = c(incID, excID), 
-    names_to = "incOrExc",
-    values_to = "specID"
-  ) %>% select(-incOrExc)
-
-nodelist <- rbind(SE, MXE, A3SS, A5SS)
+```{r}
+allmaps <- rbind(baz2b.all, cdh5.all, celf1.all, foxp1.all, nrp1.all, nrp2.all, srsf1.all, yap1.all) 
+rm(baz2b.all, cdh5.all, celf1.all, foxp1.all, nrp1.all, nrp2.all, srsf1.all, yap1.all) 
 ```
 
-```{r making isoform part of Nodelist}
-# nodelistcolumns <- c(GeneID, geneSymbol, chr, strand, PValue, FDR, IncLevel1, IncLevel2, IncLevelDifference, type, specID)
+# what do i want to show: isoform transcripts with high splicing activity
 
-annot.baz2b <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/EC-BAZ2B.gtf") %>% as.data.frame()
-annot.celf1 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/EC-CELF1.gtf") %>% as.data.frame()
-annot.foxp1 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/EC-FOXP1.gtf") %>% as.data.frame()
-annot.nrp1 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/EC-NRP1.gtf") %>% as.data.frame()
-annot.nrp2 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/EC-NRP2.gtf") %>% as.data.frame()
-annot.srsf1 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/EC-SRSF1.gtf") %>% as.data.frame()
-annot.yap1 <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/EC-YAP1.gtf") %>% as.data.frame()
 
-annot.baz2b <- annot.baz2b %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "specID" = transcript_id
-) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+# Making network graphs 
 
-annot.celf1 <- annot.celf1 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "specID" = transcript_id
-) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+```{r making matrices and graphs out of data}
+baz2b.edgelist <- baz2b.all %>% dplyr::select(eventID, transcript_id) %>% unique()
+baz2b.edgelist <- as.matrix(baz2b.edgelist)
+baz2b.g <- graph.edgelist(baz2b.edgelist, directed = T)
 
-annot.foxp1 <- annot.foxp1 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "specID" = transcript_id
-) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+cdh5.edgelist <- cdh5.all %>% dplyr::select(eventID, transcript_id) %>% unique()
+cdh5.edgelist <- as.matrix(cdh5.edgelist)
+cdh5.g <- graph.edgelist(cdh5.edgelist, directed = T)
 
-annot.nrp2 <- annot.nrp2 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "specID" = transcript_id
-) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+celf1.edgelist <- celf1.all %>% dplyr::select(eventID, transcript_id) %>% unique()
+celf1.edgelist <- as.matrix(celf1.edgelist)
+celf1.g <- graph.edgelist(celf1.edgelist, directed = T)
 
-annot.nrp2 <- annot.nrp2 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "specID" = transcript_id
-) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+foxp1.edgelist <- foxp1.all %>% dplyr::select(eventID, transcript_id) %>% unique()
+foxp1.edgelist <- as.matrix(foxp1.edgelist)
+foxp1.g <- graph.edgelist(foxp1.edgelist, directed = T)
 
-annot.srsf1 <- annot.srsf1 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "specID" = transcript_id
-) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform") 
+nrp1.edgelist <- nrp1.all %>% dplyr::select(eventID, transcript_id) %>% unique()
+nrp1.edgelist <- as.matrix(nrp1.edgelist)
+nrp1.g <- graph.edgelist(nrp1.edgelist, directed = T)
 
-annot.yap1 <- annot.yap1 %>% select(gene_id, gene_name, seqnames, strand, transcript_id) %>% rename( "GeneID" = gene_id, "geneSymbol" = gene_name, "chr" = seqnames, "specID" = transcript_id
-) %>% add_column( "PValue" = NA, "FDR" = NA, "IncLevel1" = NA, "IncLevel2" = NA, "IncLevelDifference" = NA, "type" = "isoform")
+nrp2.edgelist <- nrp2.all %>% dplyr::select(eventID, transcript_id) %>% unique()
+nrp2.edgelist <- as.matrix(nrp2.edgelist)
+nrp2.g <- graph.edgelist(nrp2.edgelist, directed = T)
 
-fullnodelist <- rbind(nodelist, annot.baz2b, annot.celf1, annot.foxp1, annot.nrp2, annot.nrp2, annot.srsf1, annot.yap1)
+srsf1.edgelist <- srsf1.all %>% dplyr::select(eventID, transcript_id) %>% unique()
+srsf1.edgelist <- as.matrix(srsf1.edgelist)
+srsf1.g <- graph.edgelist(srsf1.edgelist, directed = T)
 
+yap1.edgelist <- yap1.all %>% dplyr::select(eventID, transcript_id) %>% unique()
+yap1.edgelist <- as.matrix(yap1.edgelist)
+yap1.g <- graph.edgelist(yap1.edgelist, directed = T)
+
+rm(baz2b.all, cdh5.all, celf1.all, foxp1.all, nrp1.all, nrp2.all, srsf1.all, yap1.all)
 ```
 
 ```{r baz2b}
-baz2b.edgelist <- baz2b.se %>% dplyr::select(eventID, transcript_id) %>% unique()
-baz2b.edgelist <- as.matrix(baz2b.edgelist)
-baz2b.g <- graph.edgelist(baz2b.edgelist, directed = T)
 plot(baz2b.g, layout = layout_in_circle(baz2b.g), edge.arrow.size = 0.25, label.cex = 0.75, vertex.size = 10) + title(main = "BAZ2B interaction network")
 
-
 V(baz2b.g)[degree(baz2b.g, mode = 'in') >= 5]
-# ENST00000392783.6 ENST00000437839.5 
+# ENST00000392783.6 ENST00000437839.5
 ```
 
 ```{r celf1}
-celf1.edgelist <- celf1.se %>% dplyr::select(eventID, transcript_id) %>% unique()
-celf1.edgelist <- as.matrix(celf1.edgelist)
-celf1.g <- graph.edgelist(celf1.edgelist, directed = T)
 plot(celf1.g, layout = layout_in_circle(celf1.g), edge.arrow.size = 0.25, label.cex = 0.75, vertex.size = 10) + title(main = "CELF1 interaction network")
 
 V(celf1.g)[degree(celf1.g, mode = 'in') >= 5]
@@ -122,10 +79,6 @@ V(celf1.g)[degree(celf1.g, mode = 'in') >= 5]
 
 ```{r foxp1}
 
-foxp1.all <- rbind(foxp1.se, foxp1.mxe)
-foxp1.edgelist <- foxp1.all %>% dplyr::select(eventID, transcript_id) %>% unique()
-foxp1.edgelist <- as.matrix(foxp1.edgelist)
-foxp1.g <- graph.edgelist(foxp1.edgelist, directed = T)
 plot(foxp1.g, layout = layout_in_circle(foxp1.g), edge.arrow.size = 0.25, label.cex = 0.75, vertex.size = 10) + title(main = "foxp1 interaction network")
 
 V(foxp1.g)[degree(foxp1.g, mode = 'in') >= 5]
@@ -133,34 +86,21 @@ V(foxp1.g)[degree(foxp1.g, mode = 'in') >= 5]
 
 ```{r nrp1}
 
-nrp1.all <- rbind(nrp1.se, nrp1.mxe)
-nrp1.edgelist <- nrp1.all %>% dplyr::select(eventID, transcript_id) %>% unique()
-nrp1.edgelist <- as.matrix(nrp1.edgelist)
 nrp1.g <- graph.edgelist(nrp1.edgelist, directed = T)
 plot(nrp1.g, layout = layout_in_circle(nrp1.g), edge.arrow.size = 0.25, label.cex = 0.75, vertex.size = 10) + title(main = "nrp1 interaction network")
 
 V(nrp1.g)[degree(nrp1.g, mode = 'in') >= 3]
 ```
 
-
-
 ```{r nrp2}
 
-nrp2.all <- rbind(nrp2.se, nrp2.a5ss)
-nrp2.edgelist <- nrp2.all %>% dplyr::select(eventID, transcript_id) %>% unique()
-nrp2.edgelist <- as.matrix(nrp2.edgelist)
-nrp2.g <- graph.edgelist(nrp2.edgelist, directed = T)
 plot(nrp2.g, layout = layout_in_circle(nrp2.g), edge.arrow.size = 0.25, label.cex = 0.75, vertex.size = 10) + title(main = "nrp2 interaction network")
 
 V(nrp2.g)[degree(nrp2.g, mode = 'in') >= 2]
 ```
 
-
 ```{r srsf1}
 
-srsf1.edgelist <- srsf1.se %>% dplyr::select(eventID, transcript_id) %>% unique()
-srsf1.edgelist <- as.matrix(srsf1.edgelist)
-srsf1.g <- graph.edgelist(srsf1.edgelist, directed = T)
 plot(srsf1.g, layout = layout_in_circle(srsf1.g), edge.arrow.size = 0.25, label.cex = 0.75, vertex.size = 10) + title(main = "srsf1 interaction network")
 
 V(srsf1.g)[degree(srsf1.g, mode = 'in') >= 1]
@@ -168,47 +108,157 @@ V(srsf1.g)[degree(srsf1.g, mode = 'in') >= 1]
 
 ```{r yap1}
 
-yap1.edgelist <- yap1.se %>% dplyr::select(eventID, transcript_id) %>% unique()
-yap1.edgelist <- as.matrix(yap1.edgelist)
-yap1.g <- graph.edgelist(yap1.edgelist, directed = T)
 plot(yap1.g, layout = layout_in_circle(yap1.g), edge.arrow.size = 0.25, label.cex = 0.75, vertex.size = 10) + title(main = "yap1 interaction network")
 
 V(yap1.g)[degree(yap1.g, mode = 'in') >= 5]
 ```
 
+```{r cdh5}
+
+## modify below code
+plot(cdh5.g, layout = layout_in_circle(cdh5.g), edge.arrow.size = 0.25, label.cex = 0.75, vertex.size = 10) + title(main = "cdh5 interaction network")
+
+
+V(cdh5.g)[degree(cdh5.g, mode = 'in') >= 5]
+# ENST00000392783.6 ENST00000437839.5 
+```
+
+```{r i went crazy}
+allmaps2 <- allmaps %>% mutate(
+  eventID_general = str_sub(eventID, end=-5)
+)
+
+allmaps.exc <- allmaps2 %>% filter(grepl("exc", eventID))
+
+allmaps.both <- allmaps2 %>% filter(eventID_general %in% allmaps.exc$eventID_general)
+
+events <- allmaps.both$eventID_general %>% unique()
+
+events
+
+allsplicing <- allsplicing %>% 
+  mutate(
+    eventID_general = str_sub(incID, end=-5)
+  )
+allsplicing.both <- allsplicing %>% filter(eventID_general %in% events)
+
+ec.foxp1.expressed.known <- c("ENST00000649528.1", "ENST00000614176.5", "ENST00000649695.1", "ENST00000648748.1", "ENST00000650387.1", "ENST00000650231.1")
+
+wtc11.foxp1.expressed.known <- c("ENST00000649528.1", "ENST00000650231.1")
+
+ec.foxp1.q <- read_tsv("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/02_quantification/EC-FOXP1.tsv", col_names = FALSE) %>% as.data.frame()
+
+allmaps.both.yap1 <- allmaps.both %>% filter(gene_name == "YAP1")
+
+allmaps.both.yap1$transcript_id %>% unique()
+
+```
+
+
+To do
+
+1. Find events where inclusion and exclusion forms mapped to different isoforms
+
+2. For those genes, find isoforms that were actually expressed in the sample; calculate TPM
+
+3. for both conditions, check if there is an isoform expressed in WTC 11 that has exon 18, isoform expressed in EC that has exon 18b...?
+
 ```{r}
-baz2b.se %>% filter(transcript_id == "ENST00000392783.6" | transcript_id == "ENST00000437839.5") %>% select(eventID, transcript_id) %>% unique()
+allmaps <- allmaps %>% mutate(
+  "eventID_general" = str_sub(eventID, end=-5)
+)
+
+allmaps.exc <- allmaps %>% filter(grepl("exc", eventID))
+allmaps.exc$eventID %>% unique()
+exclusions <- c("mxe.6043", "a5ss.3558", "a5ss.3557", "mxe.9065", "mxe.9066", "mxe.5476", "a5ss.7826", "a5ss.7827")
+
+allmaps.both <- allmaps %>% filter(eventID_general %in% exclusions)
+
+allmaps.both %>% group_by(eventID_general) %>% summarize(n = n()) %>% filter(n > 1) %>% select(eventID_general) %>% as.vector()
+
+both <- c("a5ss.3558", "a5ss.7826", "a5ss.7827", "mxe.6043", "mxe.9065", "mxe.9066")
+
+allmaps.both <- allmaps %>% filter(eventID_general %in% both)
+```
+
+```{r}
+allmaps.both %>% select(gene_name) %>% unique()
+```
+
+```{r}
+ec.quant<- read_tsv("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/02_quantification/EC.tsv") %>% as.data.frame()
+wtc11.quant <- read_tsv("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/02_quantification/WTC11-1.tsv") %>% as.data.frame()
+```
+
+```{r}
+ec.total = sum(ec.quant$rep1ENCSR148IIG)
+wtc11.total = sum(wtc11.quant$rep1ENCSR507JOF)
+
+ec.quant <- ec.quant %>% mutate(
+  TPM = (rep1ENCSR148IIG/ec.total)*1000000
+)
+
+ec.quant <- ec.quant %>% rename(
+  "transcript_id" = annot_transcript_id
+)
+
+wtc11.quant <- wtc11.quant %>% mutate(
+  TPM = (rep1ENCSR507JOF/wtc11.total)*1000000
+)
+
+wtc11.quant <- wtc11.quant %>% rename(
+  "transcript_id" = annot_transcript_id
+)
 ```
 
 ```{r}
 
-V(baz2b.g)[degree(baz2b.g, mode = 'out') == 1]
+allmaps.both.foxp1 <- allmaps.both %>% filter(gene_name == "FOXP1")
+allmaps.both.nrp2 <- allmaps.both %>% filter(gene_name == "NRP2")
+allmaps.both.yap1 <- allmaps.both %>% filter(gene_name == "YAP1")
+# allmaps.both <- allmaps %>% filter(eventID_general %in% both)
+```
 
+```{r}
+allmaps.both.foxp1 <- left_join(allmaps.both.foxp1, ec.quant, by = "transcript_id")
+
+allmaps.both.foxp1 <- left_join(allmaps.both.foxp1, wtc11.quant, by = "transcript_id")
+```
+
+```{r}
+allmaps.both.foxp1 <- allmaps.both.foxp1 %>% select(c(gene_id, gene_name, strand, eventID, event_dpsi, transcript_id, type, eventID_general, rep1ENCSR148IIG, rep1ENCSR507JOF, TPM.x, TPM.y))
 ```
 
 ```{r}
 
-annot.yap1 <- annot.yap1 %>% filter(geneSymbol == "YAP1")
-annot.foxp1 <- annot.foxp1 %>% filter(geneSymbol == "FOXP1")
-annot.nrp1 <- annot.nrp1 %>% filter(geneSymbol == "NRP1")
-annot.nrp2 <- annot.nrp2 %>% filter(geneSymbol == "NRP2")
-annot.baz2b <- annot.baz2b %>% filter(geneSymbol == "BAZ2B")
-annot.celf1 <- annot.celf1 %>% filter(geneSymbol == "CELF1")
-annot.srsf1 <- annot.srsf1 %>% filter(geneSymbol == "SRSF1")
-
-rbind(annot.baz2b, annot.celf1, annot.foxp1, annot.nrp1, annot.nrp2, annot.srsf1, annot.yap1) %>% select(specID) %>% unique() %>% summarize(n = n()) 
-
-
-
-isoform.stats <- rbind(annot.baz2b, annot.celf1, annot.foxp1, annot.nrp1, annot.nrp2, annot.srsf1, annot.yap1) %>% select(specID) %>% unique() %>% mutate("status" = ifelse(grepl("ENST", specID), "known", "novel")) %>% drop_na()
-
-isoform.stats %>% group_by(status) %>% summarize(pct = (n()/(166+98)) * 100)
-
+ec.annot <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/EC-candidates.gtf") %>% as.data.frame() 
+wtc11.annot <- rtracklayer::import("/Volumes/sheynkman/projects/shay_thesis/input-data/02_long-read-EC-WTC11-1_input/01_annotation/WTC11-1-candidates.gtf") %>% as.data.frame()
 ```
 
 ```{r}
-master.maplist <- rbind(baz2b.se, celf1.se, foxp1.all, nrp1.all, nrp2.all, srsf1.se, yap1.a3ss, yap1.a5ss, yap1.mxe, yap1.se) %>% filter(gene_name %in% candidates) 
 
-master.maplist %>% group_by(eventID) %>% summarize(n = n()) %>% nrow()
+ec.annot.exons <- ec.annot %>% filter(type == "exon")
+wtc11.annot.exons <- wtc11.annot %>% filter(type == "exon")
+concatenate_exon_values <- function(df) {
+  # initialize an empty string to store the concatenated values
+  exon_values <- ""
+  print("initialized exon value")
+  # loop through each row of the data frame
+  for (i in 1:nrow(df)) {
+    # extract the exon start and end values for the current row
+    start <- df[i, "start"]
+    end <- df[i, "end"]
+    
+    # concatenate the exon start and end values to the string
+    exon_values <- paste0(exon_values, start, "-", end, ":")
+  }
+  print("loaded exon string")
+  # return the concatenated string
+  return(exon_values)
+}
+
+grouped <- ec.annot %>% group_by(transcript_id)
+ec.annot.squished <- summarize(grouped, exon_values = concatenate_exon_values(grouped))
+
 ```
 
